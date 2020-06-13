@@ -4,16 +4,29 @@ const App=()=>{
     const [profile,setProfile]=useState("")
     const [details,setDetails]=useState({})
     const [repositories,setRepositories]=useState([])
+    const [starred,setStarred]=useState([])
     useEffect(
         ()=>{
-            console.log(details)
-            console.log(details['repos_url'])
+            
             fetch(details['repos_url'])
             .then(res=>res.json())
             .then(repo=>{
                 console.log(repo)
                 setRepositories(repo)
             })
+            
+            if(details['starred_url'] !==undefined)
+            {                
+                details['starred_url']=details['starred_url'].replace('{/owner}{/repo}',"")
+            }
+            fetch(details['starred_url'])
+            .then(res=>res.json())
+            .then(repo=>{
+                console.log("starred",repo)
+                setStarred(repo)
+            })
+
+            
         },
         [details]
     )
@@ -25,10 +38,8 @@ const App=()=>{
     )
     .then(data=>
         {
-            console.log(data)
-            setDetails(data)
-            console.log("hey",data['repos_url'])
-            
+            console.log(data);
+            setDetails(data)         
             
         })
     }
@@ -56,9 +67,21 @@ const App=()=>{
                 details.avatar_url
                 ?
                 <div>
-                    <img className="img" styles={{position:'fixed',float:'right'}} src={details.avatar_url} ></img>
-                    
-                    <ul>
+                    <table style={{float:'right'}}>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <img className="img" styles={{position:'fixed',float:'right'}} src={details.avatar_url} ></img>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <h3>Number of Repos: {repositories.length}</h3>
+                                <ul>
                     <h3>Repositories</h3>
                         {repositories.map((repo,index)=>{
                         return(
@@ -68,7 +91,29 @@ const App=()=>{
                         )
                     })
                 }            
-                        </ul>               
+                        </ul>
+                            </td>
+                            <td>
+                            <h3>Number of followers: {details['followers']}</h3>                            
+                            <ul>
+                    <h3>Starred</h3>
+                        {starred.map((repo,index)=>{
+                        return(
+                            
+                            <li key={index} className="repo">{repo['name']}</li>
+                            
+                        )
+                    })
+                }            
+                        </ul>
+                            </td>
+                            
+                        </tr>
+                        </tbody>
+                    </table>
+                    
+                   
+                                   
                 </div>
                 :
                 <div>
