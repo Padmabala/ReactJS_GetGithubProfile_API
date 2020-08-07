@@ -22,7 +22,7 @@ const App=()=>{
             fetch(details['starred_url'])
             .then(res=>res.json())
             .then(repo=>{
-                console.log("starred",repo)
+                console.log("starreed",repo)
                 setStarred(repo)
             })
 
